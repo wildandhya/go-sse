@@ -1,0 +1,19 @@
+
+services:
+  sse-client:
+    build: ./client
+    ports:
+      - "80:80"
+    depends_on:
+      - sse-api
+    networks:
+      - sse-network
+  sse-api:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - sse-network
+networks:
+  sse-network:
+    driver: bridge

@@ -229,7 +229,6 @@
       // Append notification cards dynamically based on event data
       let source = new EventSource("http://localhost:8080/notif");
       source.onmessage = function (event) {
-        console.log(event.data);
         const data = JSON.parse(event.data); // Assuming the event data is a JSON string
 
         // Destructure the data fields from the event
