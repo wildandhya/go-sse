@@ -1,2 +1,2 @@
-# Server Sent Event
+# Demo
 ![](demo.gif)
