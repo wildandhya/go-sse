@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications page</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+      h1,
+      h6,
+      h4,
+      p {
+        margin: 0;
+      }
+      :root {
+        --primary-color: hsl(219, 85%, 26%);
+        --secondary-color: hsl(1, 90%, 64%);
+        --primary-bg-color: hsl(0, 0%, 100%);
+        --secondary-bg-color: hsl(210, 60%, 98%);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: hsl(210, 60%, 98%);
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: hsl(210, 60%, 98%);
+        height: 100vh;
+        padding: 0 5vw;
+      }
+      .container {
+        background-color: white;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        padding: 0 2vw;
+        box-shadow: 0px 0px 15px 0px hsl(219, 14%, 63%);
+      }
+
+      .title-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 25px;
+        margin-top: 25px;
+      }
+      .title-bar h1 {
+        color: hsl(224, 21%, 14%);
+        font-size: 2em;
+      }
+
+      .title-bar span {
+        color: white;
+        font-size: 1em;
+        margin-left: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: hsl(219, 85%, 26%);
+      }
+      .title-bar p {
+        color: hsl(219, 14%, 63%);
+        font-size: 0.9em;
+        cursor: pointer;
+      }
+      .notif-card {
+        display: flex;
+        align-items: center;
+        background-color: hsl(210, 60%, 98%);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 15px 25px;
+      }
+      .notif-card img {
+        width: 5%;
+        height: auto;
+        padding-right: 10px;
+      }
+      .notif-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .notif-group-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .notif-date {
+        color: hsl(219, 14%, 63%);
+        font-size: 0.9em;
+      }
+
+      .notif-action {
+        color: hsl(219, 14%, 63%);
+        font-size: 0.9em;
+        font-weight: 500;
+      }
+
+      .notif-data {
+        color: hsl(219, 14%, 63%);
+        font-size: 0.9em;
+        font-weight: 800;
+      }
+
+      .mark {
+        background-color: hsl(1, 90%, 64%);
+        width: 8px;
+        height: 8px;
+        border-radius: 10px;
+      }
+
+      .change-username-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .change-username-container input {
+        padding: 10px;
+        border: 1px solid hsl(219, 14%, 63%);
+        border-radius: 4px;
+        font-size: 1em;
+      }
+
+      .change-username-container button {
+        padding: 10px 15px;
+        background-color: hsl(219, 85%, 26%);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <div class="title-bar">
+          <div style="display: flex; align-items: center">
+            <h1>Notifications</h1>
+            <span id="sse-data">0</span>
+          </div>
+          <p>Mark all as read</p>
+        </div>
+        <!-- Notifications will be appended here -->
+        <div id="notif-container">
+          <!-- Existing notifications can be placed here -->
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Function to create a new notification card dynamically
+      function createNotificationCard(username, action, data, date) {
+        const card = document.createElement("div");
+        card.classList.add("notif-card");
+
+        const img = document.createElement("img");
+        img.src =
+          "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png";
+        img.alt = `avatar-${username}`;
+
+        const notifGroup = document.createElement("div");
+        notifGroup.classList.add("notif-group");
+
+        const notifGroupTop = document.createElement("div");
+        notifGroupTop.classList.add("notif-group-top");
+
+        const usernameElem = document.createElement("h4");
+        usernameElem.classList.add("notif-username");
+        usernameElem.textContent = username;
+
+        const actionElem = document.createElement("p");
+        actionElem.classList.add("notif-action");
+        actionElem.textContent = action;
+
+        const dataElem = document.createElement("h6");
+        dataElem.classList.add("notif-data");
+        dataElem.textContent = data;
+
+        const mark = document.createElement("span");
+        mark.classList.add("mark");
+
+        const dateElem = document.createElement("p");
+        dateElem.classList.add("notif-date");
+        dateElem.textContent = timeAgo(date);
+
+        // Append elements to build the card
+        notifGroupTop.appendChild(usernameElem);
+        notifGroupTop.appendChild(actionElem);
+        notifGroupTop.appendChild(dataElem);
+        notifGroupTop.appendChild(mark);
+
+        notifGroup.appendChild(notifGroupTop);
+        notifGroup.appendChild(dateElem);
+
+        card.appendChild(img);
+        card.appendChild(notifGroup);
+
+        return card;
+      }
+
+      function timeAgo(timestamp) {
+        const now = new Date();
+        const date = new Date(timestamp);
+        const seconds = Math.floor((now - date) / 1000);
+
+        let interval = Math.floor(seconds / 31536000); // years
+        if (interval > 1) return `${interval} year ago`;
+        interval = Math.floor(seconds / 2592000); // months
+        if (interval > 1) return `${interval} month ago`;
+        interval = Math.floor(seconds / 86400); // days
+        if (interval > 1) return `${interval} day ago`;
+        interval = Math.floor(seconds / 3600); // hours
+        if (interval > 1) return `${interval}h ago`;
+        interval = Math.floor(seconds / 60); // minutes
+        if (interval > 1) return `${interval}m ago`;
+        return `${seconds}s ago`; // fallback to seconds
+      }
+
+      // Append notification cards dynamically based on event data
+      let source = new EventSource("http://localhost:8080/notif");
+      source.onmessage = function (event) {
+        console.log(event.data);
+        const data = JSON.parse(event.data); // Assuming the event data is a JSON string
+
+        // Destructure the data fields from the event
+        const { username, activity, post, timestamp } = data;
+
+        const notifContainer = document.getElementById("notif-container");
+        const newNotifCard = createNotificationCard(
+          username,
+          activity,
+          post,
+          timestamp
+        );
+
+        notifContainer.appendChild(newNotifCard);
+
+        // Optionally, update the notification count
+        const dataElement = document.getElementById("sse-data");
+        dataElement.innerHTML = notifContainer.children.length;
+      };
+    </script>
+  </body>
+</html>
